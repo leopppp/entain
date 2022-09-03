@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/leopppp/entain/racing/db"
-	"github.com/leopppp/entain/racing/proto/racing"
+	"git.neds.sh/matty/entain/racing/db"
+	"git.neds.sh/matty/entain/racing/proto/racing"
 	"golang.org/x/net/context"
 )
 

@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	"git.neds.sh/matty/entain/api/proto/racing"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/leopppp/entain/api/proto/racing"
 	"google.golang.org/grpc"
 )
 

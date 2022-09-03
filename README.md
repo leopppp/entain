@@ -68,21 +68,6 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 }'
 ```
 
-5. Make a request for visible only races...
-```bash
-curl -X "POST" "http://localhost:8000/v1/list-races" \
-     -H 'Content-Type: application/json' \
-     -d $'{
-  "filter": {"visible_only": true}
-}'
-
-curl -X "POST" "http://localhost:8000/v1/list-races" \
-     -H 'Content-Type: application/json' \
-     -d $'{
-  "filter": {"meeting_ids": [5, 8], "visible_only": true}
-}'
-```
-
 ### Changes/Updates Required
 
 - We'd like to see you push this repository up to **GitHub/Gitlab/Bitbucket** and lodge a **Pull/Merge Request for each** of the below tasks.
