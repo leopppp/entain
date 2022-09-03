@@ -64,3 +64,70 @@ func TestApplyFilterWhenMeetingIdsAndVisibleFalse(t *testing.T) {
 	assert.Equal(t, "SELECT * FROM races WHERE meeting_id IN (?,?)", query)
 	assert.ObjectsAreEqualValues([]int64{5, 8}, args)
 }
+
+func TestApplyOrderByNil(t *testing.T) {
+	rr := &racesRepo{}
+
+	query := rr.applyOrderBy("SELECT * FROM races", nil)
+
+	assert.Equal(t, "SELECT * FROM races", query)
+}
+
+func TestApplyOrderByPropertyEmpty(t *testing.T) {
+	rr := &racesRepo{}
+
+	query := rr.applyOrderBy("SELECT * FROM races", &racing.ListRacesRequestOrderBy{
+		Property: "",
+		Asc:      true,
+	})
+
+	assert.Equal(t, "SELECT * FROM races", query)
+}
+
+func TestApplyOrderByAscendingWhenFilterEmpty(t *testing.T) {
+	rr := &racesRepo{}
+
+	query := rr.applyOrderBy("SELECT * FROM races", &racing.ListRacesRequestOrderBy{
+		Property: "advertised_start_time",
+		Asc:      true,
+	})
+
+	assert.Equal(t, "SELECT * FROM races ORDER BY advertised_start_time ASC", query)
+}
+
+func TestApplyOrderByDescendingWhenFilterEmpty(t *testing.T) {
+	rr := &racesRepo{}
+
+	query := rr.applyOrderBy("SELECT * FROM races", &racing.ListRacesRequestOrderBy{
+		Property: "meeting_id",
+		Asc:      false,
+	})
+
+	assert.Equal(t, "SELECT * FROM races ORDER BY meeting_id DESC", query)
+}
+
+func TestApplyOrderByAscendingWhenHavingFilter(t *testing.T) {
+	rr := &racesRepo{}
+
+	query, _ := rr.applyFilter("SELECT * FROM races", &racing.ListRacesRequestFilter{VisibleOnly: true})
+
+	query = rr.applyOrderBy(query, &racing.ListRacesRequestOrderBy{
+		Property: "advertised_start_time",
+		Asc:      true,
+	})
+
+	assert.Equal(t, "SELECT * FROM races WHERE visible = 1 ORDER BY advertised_start_time ASC", query)
+}
+
+func TestApplyOrderByDescendingWhenHavingFilter(t *testing.T) {
+	rr := &racesRepo{}
+
+	query, _ := rr.applyFilter("SELECT * FROM races", &racing.ListRacesRequestFilter{VisibleOnly: true})
+
+	query = rr.applyOrderBy(query, &racing.ListRacesRequestOrderBy{
+		Property: "visible",
+		Asc:      false,
+	})
+
+	assert.Equal(t, "SELECT * FROM races WHERE visible = 1 ORDER BY visible DESC", query)
+}
