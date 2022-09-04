@@ -21,6 +21,9 @@ type RacesRepo interface {
 
 	// List will return a list of races.
 	List(filter *racing.ListRacesRequestFilter, orderBy *racing.ListRacesRequestOrderBy) ([]*racing.Race, error)
+
+	// Get will return a single race by its ID.
+	Get(id int64) (*racing.Race, error)
 }
 
 type racesRepo struct {
@@ -67,6 +70,17 @@ func (r *racesRepo) List(filter *racing.ListRacesRequestFilter, orderBy *racing.
 	}
 
 	return r.scanRaces(rows)
+}
+
+func (r *racesRepo) Get(id int64) (*racing.Race, error) {
+	var args []interface{}
+
+	query := getRaceQueries()[racesList] + " WHERE id = ?"
+	args = append(args, id)
+
+	row := r.db.QueryRow(query, args...)
+
+	return r.scanRace(row)
 }
 
 func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFilter) (string, []interface{}) {
@@ -132,20 +146,52 @@ func (m *racesRepo) scanRaces(
 			return nil, err
 		}
 
-		ts, err := ptypes.TimestampProto(advertisedStart)
-		if err != nil {
+		if err := setAdvertisedStartTime(advertisedStart, &race); err != nil {
 			return nil, err
 		}
 
-		race.AdvertisedStartTime = ts
-
-		if time.Now().Before(advertisedStart) {
-			// Set status to open if advertised start is in the future
-			race.Status = racing.Status_OPEN
-		}
+		setStatus(advertisedStart, &race)
 
 		races = append(races, &race)
 	}
 
 	return races, nil
+}
+
+func (m *racesRepo) scanRace(row *sql.Row) (*racing.Race, error) {
+	var race racing.Race
+	var advertisedStart time.Time
+
+	if err := row.Scan(&race.Id, &race.MeetingId, &race.Name, &race.Number, &race.Visible, &advertisedStart); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	if err := setAdvertisedStartTime(advertisedStart, &race); err != nil {
+		return nil, err
+	}
+
+	setStatus(advertisedStart, &race)
+
+	return &race, nil
+}
+
+func setAdvertisedStartTime(advertisedStart time.Time, race *racing.Race) error {
+	ts, err := ptypes.TimestampProto(advertisedStart)
+	if err != nil {
+		return err
+	}
+	race.AdvertisedStartTime = ts
+
+	return nil
+}
+
+func setStatus(advertisedStart time.Time, race *racing.Race) {
+	if time.Now().Before(advertisedStart) {
+		// Set status to open if advertised start is in the future
+		race.Status = racing.Status_OPEN
+	}
 }

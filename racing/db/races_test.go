@@ -140,8 +140,9 @@ func TestScanRacesWhenStatusClosed(t *testing.T) {
 	racesRepo := &racesRepo{}
 	mockRows := sqlmock.NewRows([]string{"id", "meeting_id", "name", "number", "visible", "advertised_start_time"}).AddRow(123, 100, "Fake Name", 5, true, timestamppb.New(time.Now().AddDate(0, 0, -10)).AsTime())
 	sqlRows := mockSqlRows(mockRows)
-	races, _ := racesRepo.scanRaces(sqlRows)
+	races, err := racesRepo.scanRaces(sqlRows)
 
+	assert.NoError(t, err)
 	assert.Equal(t, racing.Status_CLOSED, races[0].Status)
 }
 
@@ -149,9 +150,21 @@ func TestScanRacesWhenStatusOpen(t *testing.T) {
 	racesRepo := &racesRepo{}
 	mockRows := sqlmock.NewRows([]string{"id", "meeting_id", "name", "number", "visible", "advertised_start_time"}).AddRow(123, 100, "Fake Name", 5, true, timestamppb.New(time.Now().AddDate(0, 0, 10)).AsTime())
 	sqlRows := mockSqlRows(mockRows)
-	races, _ := racesRepo.scanRaces(sqlRows)
+	races, err := racesRepo.scanRaces(sqlRows)
 
+	assert.NoError(t, err)
 	assert.Equal(t, racing.Status_OPEN, races[0].Status)
+}
+
+func TestScanRace(t *testing.T) {
+	racesRepo := &racesRepo{}
+
+	mockRows := sqlmock.NewRows([]string{"id", "meeting_id", "name", "number", "visible", "advertised_start_time"}).AddRow(10, 100, "Fake Name", 5, true, timestamppb.New(time.Now().AddDate(0, 0, 1)).AsTime())
+	sqlRow := mockSqlRow(mockRows)
+	race, err := racesRepo.scanRace(sqlRow)
+
+	assert.NoError(t, err)
+	assert.Equal(t, int64(10), race.Id)
 }
 
 func mockSqlRows(mockRows *sqlmock.Rows) *sql.Rows {
@@ -159,4 +172,11 @@ func mockSqlRows(mockRows *sqlmock.Rows) *sql.Rows {
 	mock.ExpectQuery("select").WillReturnRows(mockRows)
 	rows, _ := db.Query("select")
 	return rows
+}
+
+func mockSqlRow(mockRows *sqlmock.Rows) *sql.Row {
+	db, mock, _ := sqlmock.New()
+	mock.ExpectQuery("select").WillReturnRows(mockRows)
+	row := db.QueryRow("select")
+	return row
 }

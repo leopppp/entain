@@ -98,6 +98,11 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 }'
 ```
 
+7. Get a single race by its ID.
+```bash
+curl -X "GET" "http://localhost:8000/v1/races/10"
+```
+
 ### Changes/Updates Required
 
 - We'd like to see you push this repository up to **GitHub/Gitlab/Bitbucket** and lodge a **Pull/Merge Request for each** of the below tasks.
