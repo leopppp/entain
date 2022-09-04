@@ -83,7 +83,7 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 }'
 ```
 
-6. Make a request and list races in specific order by propery
+6. Make a request and list races in specific order by propery, i.e. id, meeting_id, name, number, visible and advertised_start_time.
 ```bash
 curl -X "POST" "http://localhost:8000/v1/list-races" \
      -H 'Content-Type: application/json' \
