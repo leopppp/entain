@@ -3,6 +3,7 @@ module github.com/leopppp/entain/racing
 go 1.16
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.3.0
 	github.com/mattn/go-sqlite3 v1.14.6

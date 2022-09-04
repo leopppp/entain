@@ -1,7 +1,11 @@
 package db
 
 import (
+	"database/sql"
+	"github.com/DATA-DOG/go-sqlmock"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"testing"
+	"time"
 
 	"github.com/leopppp/entain/racing/proto/racing"
 	"github.com/stretchr/testify/assert"
@@ -130,4 +134,29 @@ func TestApplyOrderByDescendingWhenHavingFilter(t *testing.T) {
 	})
 
 	assert.Equal(t, "SELECT * FROM races WHERE visible = 1 ORDER BY visible DESC", query)
+}
+
+func TestScanRacesWhenStatusClosed(t *testing.T) {
+	racesRepo := &racesRepo{}
+	mockRows := sqlmock.NewRows([]string{"id", "meeting_id", "name", "number", "visible", "advertised_start_time"}).AddRow(123, 100, "Fake Name", 5, true, timestamppb.New(time.Now().AddDate(0, 0, -10)).AsTime())
+	sqlRows := mockSqlRows(mockRows)
+	races, _ := racesRepo.scanRaces(sqlRows)
+
+	assert.Equal(t, racing.Status_CLOSED, races[0].Status)
+}
+
+func TestScanRacesWhenStatusOpen(t *testing.T) {
+	racesRepo := &racesRepo{}
+	mockRows := sqlmock.NewRows([]string{"id", "meeting_id", "name", "number", "visible", "advertised_start_time"}).AddRow(123, 100, "Fake Name", 5, true, timestamppb.New(time.Now().AddDate(0, 0, 10)).AsTime())
+	sqlRows := mockSqlRows(mockRows)
+	races, _ := racesRepo.scanRaces(sqlRows)
+
+	assert.Equal(t, racing.Status_OPEN, races[0].Status)
+}
+
+func mockSqlRows(mockRows *sqlmock.Rows) *sql.Rows {
+	db, mock, _ := sqlmock.New()
+	mock.ExpectQuery("select").WillReturnRows(mockRows)
+	rows, _ := db.Query("select")
+	return rows
 }
