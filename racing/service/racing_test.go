@@ -21,6 +21,7 @@ var (
 )
 
 func init() {
+	// Ideally, we should mock a database to do the tests.
 	racingDb, err = sql.Open("sqlite3", "../db/racing.db")
 	if err != nil {
 		panic(err)
@@ -43,7 +44,7 @@ func TestListRacesWhenFilterEmpty(t *testing.T) {
 	assert.Equal(t, len(res.Races), 100)
 }
 
-func TestListRacesWhenVisibleFalse(t *testing.T) {
+func TestListRacesWhenVisibleOnlyFalse(t *testing.T) {
 	req := &racing.ListRacesRequest{
 		Filter: &racing.ListRacesRequestFilter{VisibleOnly: false},
 	}
@@ -54,7 +55,7 @@ func TestListRacesWhenVisibleFalse(t *testing.T) {
 	assert.Equal(t, len(res.Races), 100)
 }
 
-func TestListRacesWhenVisibleTrue(t *testing.T) {
+func TestListRacesWhenVisibleOnlyTrue(t *testing.T) {
 	req := &racing.ListRacesRequest{
 		Filter: &racing.ListRacesRequestFilter{VisibleOnly: true},
 	}
@@ -65,7 +66,7 @@ func TestListRacesWhenVisibleTrue(t *testing.T) {
 	assert.Equal(t, len(res.Races), 54)
 }
 
-func TestListRacesWhenMeetingIdsAndVisibleTrue(t *testing.T) {
+func TestListRacesWhenMeetingIdsAndVisibleOnlyTrue(t *testing.T) {
 	req := &racing.ListRacesRequest{
 		Filter: &racing.ListRacesRequestFilter{MeetingIds: []int64{5}, VisibleOnly: true},
 	}
@@ -76,7 +77,7 @@ func TestListRacesWhenMeetingIdsAndVisibleTrue(t *testing.T) {
 	assert.Equal(t, len(res.Races), 5)
 }
 
-func TestListRacesWhenMeetingIdsAndVisibleFalse(t *testing.T) {
+func TestListRacesWhenMeetingIdsAndVisibleOnyFalse(t *testing.T) {
 	req := &racing.ListRacesRequest{
 		Filter: &racing.ListRacesRequestFilter{MeetingIds: []int64{5}, VisibleOnly: false},
 	}

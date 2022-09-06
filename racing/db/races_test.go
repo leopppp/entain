@@ -19,7 +19,7 @@ func TestApplyFilterWhenEmpty(t *testing.T) {
 	assert.Nil(t, args)
 }
 
-func TestApplyFilterWhenVisibleFalse(t *testing.T) {
+func TestApplyFilterWhenVisibleOnlyFalse(t *testing.T) {
 	racesRepo := &racesRepo{}
 	query, args := racesRepo.applyFilter("SELECT * FROM races", &racing.ListRacesRequestFilter{
 		VisibleOnly: false,
@@ -29,7 +29,7 @@ func TestApplyFilterWhenVisibleFalse(t *testing.T) {
 	assert.Nil(t, args)
 }
 
-func TestApplyFilterWhenVisibleTrue(t *testing.T) {
+func TestApplyFilterWhenVisibleOnlyTrue(t *testing.T) {
 	racesRepo := &racesRepo{}
 	query, args := racesRepo.applyFilter("SELECT * FROM races", &racing.ListRacesRequestFilter{
 		VisibleOnly: true,
@@ -49,7 +49,7 @@ func TestApplyFilterWhenMeetingIds(t *testing.T) {
 	assert.ObjectsAreEqualValues([]int64{5}, args)
 }
 
-func TestApplyFilterWhenMeetingIdsAndVisibleTrue(t *testing.T) {
+func TestApplyFilterWhenMeetingIdsAndVisibleOnlyTrue(t *testing.T) {
 	racesRepo := &racesRepo{}
 	query, args := racesRepo.applyFilter("SELECT * FROM races", &racing.ListRacesRequestFilter{
 		MeetingIds: []int64{5, 8}, VisibleOnly: true,
@@ -59,7 +59,7 @@ func TestApplyFilterWhenMeetingIdsAndVisibleTrue(t *testing.T) {
 	assert.ObjectsAreEqualValues([]int64{5, 8}, args)
 }
 
-func TestApplyFilterWhenMeetingIdsAndVisibleFalse(t *testing.T) {
+func TestApplyFilterWhenMeetingIdsAndVisibleOnlyFalse(t *testing.T) {
 	racesRepo := &racesRepo{}
 	query, args := racesRepo.applyFilter("SELECT * FROM races", &racing.ListRacesRequestFilter{
 		MeetingIds: []int64{5, 8}, VisibleOnly: false,

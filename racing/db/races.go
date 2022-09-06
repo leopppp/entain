@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -30,9 +29,6 @@ type racesRepo struct {
 	db   *sql.DB
 	init sync.Once
 }
-
-var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
-var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 
 // NewRacesRepo creates a new races repository.
 func NewRacesRepo(db *sql.DB) RacesRepo {

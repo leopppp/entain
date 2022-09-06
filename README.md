@@ -8,6 +8,7 @@ Please treat the services provided as if they would live in a real-world environ
 
 - `api`: A basic REST gateway, forwarding requests onto service(s).
 - `racing`: A very bare-bones racing service.
+- `sports`: A very bare-bones sports service.
 
 ```
 entain/
@@ -15,6 +16,11 @@ entain/
 │  ├─ proto/
 │  ├─ main.go
 ├─ racing/
+│  ├─ db/
+│  ├─ proto/
+│  ├─ service/
+│  ├─ main.go
+├─ sports/
 │  ├─ db/
 │  ├─ proto/
 │  ├─ service/
@@ -40,7 +46,7 @@ brew install protobuf
 
 ... or [see here](https://grpc.io/docs/protoc-installation/).
 
-2. In a terminal window, start our racing service...
+3. In a terminal window, start our racing service...
 
 ```bash
 cd ./racing
@@ -49,7 +55,16 @@ go build && ./racing
 ➜ INFO[0000] gRPC server listening on: localhost:9000
 ```
 
-3. In another terminal window, start our api service...
+4. In another terminal window, start our sports service...
+
+```bash
+cd ./sports
+
+go build && ./sports
+➜ INFO[0000] gRPC server listening on: localhost:9001
+```
+
+5. In another terminal window, start our api service...
 
 ```bash
 cd ./api
@@ -58,7 +73,7 @@ go build && ./api
 ➜ INFO[0000] API server listening on: localhost:8000
 ```
 
-4. Make a request for races... 
+6. Make a request for races... 
 
 ```bash
 curl -X "POST" "http://localhost:8000/v1/list-races" \
@@ -68,7 +83,7 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 }'
 ```
 
-5. Make a request for visible only races...
+7. Make a request for visible only races...
 ```bash
 curl -X "POST" "http://localhost:8000/v1/list-races" \
      -H 'Content-Type: application/json' \
@@ -83,7 +98,7 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 }'
 ```
 
-6. Make a request and list races in specific order by propery, i.e. id, meeting_id, name, number, visible and advertised_start_time.
+8. Make a request and list races in specific order by propery, i.e. id, meeting_id, name, number, visible and advertised_start_time.
 ```bash
 curl -X "POST" "http://localhost:8000/v1/list-races" \
      -H 'Content-Type: application/json' \
@@ -98,9 +113,36 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 }'
 ```
 
-7. Get a single race by its ID.
+9. Get a single race by its ID.
 ```bash
 curl -X "GET" "http://localhost:8000/v1/races/10"
+```
+
+10. Make a request for events... 
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-events" \
+     -H 'Content-Type: application/json' \
+     -d $'{
+  "filter": {}
+}'
+```
+
+11. Make a request for visible only events...
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-events" \
+     -H 'Content-Type: application/json' \
+     -d $'{
+  "filter": {"visible_only": true}
+}'
+```
+
+12. List events in specific order by propery, i.e. id, name, address, visible and advertised_start_time.
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-events" \
+     -H 'Content-Type: application/json' \
+     -d $'{
+  "order_by": {"property": "advertised_start_time", "asc": true}
+}'
 ```
 
 ### Changes/Updates Required
