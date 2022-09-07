@@ -68,6 +68,36 @@ curl -X "POST" "http://localhost:8000/v1/list-races" \
 }'
 ```
 
+5. Make a request for visible only races...
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d $'{
+  "filter": {"visible_only": true}
+}'
+
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d $'{
+  "filter": {"meeting_ids": [5, 8], "visible_only": true}
+}'
+```
+
+6. Make a request and list races in specific order by propery, i.e. id, meeting_id, name, number, visible and advertised_start_time.
+```bash
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d $'{
+  "order_by": {"property": "advertised_start_time", "asc": true}
+}'
+
+curl -X "POST" "http://localhost:8000/v1/list-races" \
+     -H 'Content-Type: application/json' \
+     -d $'{
+  "order_by": {"property": "meeting_id", "asc": false}
+}'
+```
+
 ### Changes/Updates Required
 
 - We'd like to see you push this repository up to **GitHub/Gitlab/Bitbucket** and lodge a **Pull/Merge Request for each** of the below tasks.

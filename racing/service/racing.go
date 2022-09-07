@@ -1,8 +1,8 @@
 package service
 
 import (
-	"git.neds.sh/matty/entain/racing/db"
-	"git.neds.sh/matty/entain/racing/proto/racing"
+	"github.com/leopppp/entain/racing/db"
+	"github.com/leopppp/entain/racing/proto/racing"
 	"golang.org/x/net/context"
 )
 
@@ -22,7 +22,7 @@ func NewRacingService(racesRepo db.RacesRepo) Racing {
 }
 
 func (s *racingService) ListRaces(ctx context.Context, in *racing.ListRacesRequest) (*racing.ListRacesResponse, error) {
-	races, err := s.racesRepo.List(in.Filter)
+	races, err := s.racesRepo.List(in.Filter, in.OrderBy)
 	if err != nil {
 		return nil, err
 	}

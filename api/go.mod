@@ -1,4 +1,4 @@
-module git.neds.sh/matty/entain/api
+module github.com/leopppp/entain/api
 
 go 1.16
 

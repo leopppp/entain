@@ -18,6 +18,7 @@ service Racing {
 // Request for ListRaces call.
 message ListRacesRequest {
   ListRacesRequestFilter filter = 1;
+  ListRacesRequestOrderBy order_by = 2;
 }
 
 // Response to ListRaces call.
@@ -28,6 +29,13 @@ message ListRacesResponse {
 // Filter for listing races.
 message ListRacesRequestFilter {
   repeated int64 meeting_ids = 1;
+  bool visible_only = 2;
+}
+
+// Sorting for listing races.
+message ListRacesRequestOrderBy {
+  string property = 1;
+  bool asc = 2;
 }
 
 /* Resources */
@@ -46,4 +54,11 @@ message Race {
   bool visible = 5;
   // AdvertisedStartTime is the time the race is advertised to run.
   google.protobuf.Timestamp advertised_start_time = 6;
+  // Status represents whether or not the race is open
+  Status status = 7;
+}
+
+enum Status{
+  CLOSED = 0;
+  OPEN = 1;
 }
